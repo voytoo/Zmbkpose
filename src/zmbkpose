@@ -188,7 +188,7 @@ backup_all_accounts_parallel()
 	        STAT=$(ps aux | grep -i curl | grep -v grep| wc -l)
 
 	        if [ $STAT -lt $MAX_PARALLEL_PROCESS ];then
-	                MAILHOST=$(grep -A1 ^$MAIL $LISTALLACCOUNTS| grep -v @)
+	                MAILHOST=$(grep -B1 ^$MAIL $LISTALLACCOUNTS| grep -v @)
 	                $(which ldapsearch) -x -H $LDAPMASTERSERVER -D $LDAPZIMBRADN -w $LDAPZIMBRAPASS -b '' -LLL "(zimbraMailDeliveryAddress=$MAIL)" > $TEMPDIR/$MAIL.ldiff
 	                $(which curl) -k -u $ADMINUSER:$ADMINPASS https://$MAILHOST:7071/home/$MAIL/?fmt=tgz > $TEMPDIR/$MAIL.tgz &
 	                $(which curl) -k -u $ADMINUSER:$ADMINPASS https://$MAILHOST:7071/home/$MAIL/Junk?fmt=tgz > $TEMPDIR/$MAIL.Junk.tgz &
@@ -205,7 +205,7 @@ backup_all_accounts_parallel()
 
 			# Execution block
 	                # Bloco de execução
-	                MAILHOST=$(grep -A1 ^$MAIL $LISTALLACCOUNTS| grep -v @)
+	                MAILHOST=$(grep -B1 ^$MAIL $LISTALLACCOUNTS| grep -v @)
 	                $(which ldapsearch) -x -H $LDAPMASTERSERVER -D $LDAPZIMBRADN -w $LDAPZIMBRAPASS -b '' -LLL "(zimbraMailDeliveryAddress=$MAIL)" > $TEMPDIR/$MAIL.ldiff
 	                $(which curl) -k -u $ADMINUSER:$ADMINPASS https://$MAILHOST:7071/home/$MAIL/?fmt=tgz > $TEMPDIR/$MAIL.tgz &
 	                $(which curl) -k -u $ADMINUSER:$ADMINPASS https://$MAILHOST:7071/home/$MAIL/Junk?fmt=tgz > $TEMPDIR/$MAIL.Junk.tgz &
@@ -239,7 +239,7 @@ backup_all_accounts ()
 	TEMPDIR=$(mktemp -d $WORKDIR/XXXX)
 	
 	for MAIL in $(grep @ $LISTALLACCOUNTS); do
-        	MAILHOST=$(grep -A1 ^$MAIL $LISTALLACCOUNTS| grep -v @)
+        	MAILHOST=$(grep -B1 ^$MAIL $LISTALLACCOUNTS| grep -v @)
 	        $(which ldapsearch) -x -H $LDAPMASTERSERVER -D $LDAPZIMBRADN -w $LDAPZIMBRAPASS -b '' -LLL "(zimbraMailDeliveryAddress=$MAIL)" > $TEMPDIR/$MAIL.ldiff
 	        $(which curl) -k -u $ADMINUSER:$ADMINPASS https://$MAILHOST:7071/home/$MAIL/?fmt=tgz > $TEMPDIR/$MAIL.tgz
 	        $(which curl) -k -u $ADMINUSER:$ADMINPASS https://$MAILHOST:7071/home/$MAIL/Junk?fmt=tgz > $TEMPDIR/$MAIL.Junk.tgz &
@@ -365,7 +365,7 @@ incremental_all_accounts ()
 	                if [ "$INCFROM" = "$(date +%m/%d/%y)" ]; then
 	                        echo "WARN: $MAIL already has backup today. Nothing to do." | tee -a $WORKDIR/sessions.txt
 	                else
-	                        MAILHOST=$(grep -A1 ^$MAIL $LISTALLACCOUNTS| grep -v @)
+	                        MAILHOST=$(grep -B1 ^$MAIL $LISTALLACCOUNTS| grep -v @)
 	                        $(which ldapsearch) -x -H $LDAPMASTERSERVER -D $LDAPZIMBRADN -w $LDAPZIMBRAPASS -b '' -LLL "(zimbraMailDeliveryAddress=$MAIL)" > $TEMPDIR/$MAIL.ldiff
 	                        $(which curl) -k -u $ADMINUSER:$ADMINPASS https://$MAILHOST:7071/home/$MAIL/?fmt=tgz\&query=after:\"$INCFROM\" > $TEMPDIR/$MAIL.tgz
 	                        $(which curl) -k -u $ADMINUSER:$ADMINPASS https://$MAILHOST:7071/home/$MAIL/Junk?fmt=tgz\&query=after:\"$INCFROM\" > $TEMPDIR/$MAIL.Junk.tgz
